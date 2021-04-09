@@ -1,0 +1,44 @@
+# Ma_Sys.ma Dockerfile for `bupstash` 1.0.0, Copyright (c) 2021 Ma_Sys.ma.
+# For further info send an e-mail to Ma_Sys.ma@web.de.
+
+# docker build -t masysmalocal/bupstash --build-arg MA_DEBIAN_MIRROR=http://192.168.1.16/debian -f dockerfile_bupstash .
+
+ARG     MDVL_CI_ARCH_PREFIX=
+ARG     MDVL_CI_DEBIAN_VERSION=bullseye
+FROM    ${MDVL_CI_ARCH_PREFIX}debian:$MDVL_CI_DEBIAN_VERSION as s0-root
+ARG     MDVL_CI_DEBIAN_VERSION=bullseye
+ARG     MA_DEBIAN_MIRROR=http://ftp.it.debian.org/debian
+SHELL   ["/bin/sh", "-ec"]
+# Repository line with bullseye specific security repo notation.
+RUN     :; \
+	printf "%s\n%s\n%s %s\n" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION main" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION-updates main" \
+		"deb http://security.debian.org/" \
+				"$MDVL_CI_DEBIAN_VERSION-security main" \
+		> /etc/apt/sources.list; \
+	useradd -u 1000 -m bupstashuser; \
+	apt-get update; \
+	apt-get -y full-upgrade; \
+	apt-get -y install libsodium23 libgcc1; \
+	:;
+
+FROM    s0-root as s1-compile
+RUN     :; \
+	apt-get -y install libsodium-dev rustc git cargo pkg-config; \
+	mkdir -p /home/bupstashuser/wd; \
+	chown bupstashuser:bupstashuser -R /home/bupstashuser; \
+	:;
+USER    bupstashuser
+WORKDIR /home/bupstashuser/wd
+RUN     git clone --depth=1 https://github.com/andrewchambers/bupstash
+WORKDIR /home/bupstashuser/wd/bupstash
+RUN	cargo build --release -j18
+
+FROM    s0-root
+LABEL   maintainer "Linux-Fan, Ma_Sys.ma <Ma_Sys.ma@web.de>"
+LABEL   name bupstash
+USER    bupstashuser
+COPY    --chown=root:root --from=s1-compile \
+			/home/bupstashuser/wd/bupstash/target/release/bupstash \
+			/usr/local/bin

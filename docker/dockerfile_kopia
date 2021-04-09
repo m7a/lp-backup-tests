@@ -1,0 +1,33 @@
+# Ma_Sys.ma Dockerfile for `kopia` 1.0.0, Copyright (c) 2021 Ma_Sys.ma.
+# For further info send an e-mail to Ma_Sys.ma@web.de.
+
+# docker build -t masysmalocal/kopia --build-arg MA_DEBIAN_MIRROR=http://192.168.1.16/debian -f dockerfile_kopia .
+
+ARG     MDVL_CI_ARCH_PREFIX=
+ARG     MDVL_CI_DEBIAN_VERSION=buster
+FROM    ${MDVL_CI_ARCH_PREFIX}debian:$MDVL_CI_DEBIAN_VERSION
+ARG     MDVL_CI_DEBIAN_VERSION=buster
+ARG     MA_DEBIAN_MIRROR=http://ftp.it.debian.org/debian
+LABEL   maintainer "Linux-Fan, Ma_Sys.ma <Ma_Sys.ma@web.de>"
+LABEL   name bupstash
+SHELL   ["/bin/sh", "-ec"]
+ENV     KOPIA_CHECK_FOR_UPDATES=false
+# Repository line with bullseye specific security repo notation.
+RUN     :; \
+	printf "%s\n%s\n%s %s\n" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION main" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION-updates main" \
+		"deb http://security.debian.org/" \
+				"$MDVL_CI_DEBIAN_VERSION/updates main" \
+		> /etc/apt/sources.list; \
+	useradd -u 1000 -m backupuser; \
+	apt-get update; \
+	apt-get -y full-upgrade; \
+	apt-get -y install wget gnupg2; \
+	wget -O- https://kopia.io/signing-key | apt-key add -; \
+	echo "deb http://packages.kopia.io/apt/ stable main" >> \
+						/etc/apt/sources.list; \
+	apt-get update; \
+	apt-get -y install kopia; \
+	:;
+USER    backupuser
