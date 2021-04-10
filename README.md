@@ -293,12 +293,14 @@ Compression and Deduplication
     limits of a single drive are reached. Even which cheap storage, needing less
     of it allows a higher number of old backups to be retained at same cost.
 
-	# an example of compression working efficiently for less than 1 KiB
-	# of redundant input data:
-	$ for i in `seq 1 80`; do echo hello world; done | wc -c
-	960
-	$ for i in `seq 1 80`; do echo hello world; done | gzip -9 | wc -c
-	41
+~~~
+# an example of compression working efficiently for less than 1 KiB
+# of redundant input data:
+$ for i in `seq 1 80`; do echo hello world; done | wc -c
+960
+$ for i in `seq 1 80`; do echo hello world; done | gzip -9 | wc -c
+41
+~~~
 
 Integrity Checks
 :   In an ideal world, everyone would test their backups regularly by performing
@@ -1020,7 +1022,7 @@ longer execution time for Borg form this perspective. `java` processes are not
 plotted here because given that there were some other Java background tasks,
 they would clutter the view by overlaying the other tools' graphs.
 
-![Screenshot of a single Kopia run](backup_tests_borg_bupstash_kopia_att/grafana_single_kopia.png)
+![Screenshot of a single Kopia run](backup_tests_borg_bupstash_kopia_att/grafana_detail_kopia.png)
 
 Drilling further down reveals the use and imprecision of the
 application-specific diagrams. The first row of diagrams is now mostly constant
