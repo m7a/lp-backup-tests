@@ -31,8 +31,7 @@ RUN     :; \
 	:;
 USER    bupstashuser
 WORKDIR /home/bupstashuser/wd
-# branch args are experimental
-RUN     git clone --depth=1 --single-branch --branch=exclusivelocking https://github.com/andrewchambers/bupstash
+RUN     git clone --depth=1 https://github.com/andrewchambers/bupstash
 WORKDIR /home/bupstashuser/wd/bupstash
 RUN	cargo build --release -j18
 
