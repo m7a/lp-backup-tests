@@ -10,9 +10,7 @@ workspace=/media/backupinput/br
 root="$(cd "$(dirname "$0")" && pwd)"
 statdb="--db=INSECURE:linux-fan:testwort@127.0.0.1"
 toolslist="borg bupstash jmbb kopia"
-# Bupstash excluded for NFS test
-#toolslist="borg jmbb kopia"
-prefix=t4datasshfs-
+prefix=t8datasshfs-
 
 malog() {
 	echo "test-runner[$$] === $* :: $(date) ==="
@@ -54,7 +52,7 @@ if [ $# = 0 ]; then
 fi
 
 runid="$2"
-malog "this is run id $runid with ver 10 prefix=$prefix"
+malog "this is run id $runid with ver 11 prefix=$prefix"
 
 inputs="$(find "$backupinputs" -maxdepth 1 -type f -name '*.tar' | sort)"
 finish="$logdir/${prefix}finish.txt"

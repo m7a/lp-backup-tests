@@ -6,7 +6,7 @@ date: 2021/03/16 18:59:46
 lang: en-US
 author: ["Linux-Fan, Ma_Sys.ma (Ma_Sys.ma@web.de)"]
 keywords: ["linux", "backup", "borg", "bupstash", "jmbb", "kopia", "deduplicating"]
-x-masysma-version: 1.0.0
+x-masysma-version: 1.1.0
 x-masysma-repository: https://www.github.com/m7a/lp-backup-tests
 x-masysma-website: https://masysma.lima-city.de/37/backup_tests_borg_bupstash_kopia.xhtml
 x-masysma-owned: 1
@@ -933,22 +933,22 @@ over network, tests with NFS and SSHFS targets have been performed. The
 following wall times could be observed for the different target storages.
 Column _Local_ has been copied from before for comparison.
 
-State  Tool      Local/s  NFS/s  SSHFS/s
------  --------  -------  -----  -------
-x2a00  Borg      9 579    8 954  11 256
-       Bupstash  120      1 243  470
-       JMBB      1 297    690    8 392
-       Kopia     168      271    350
-                                  
-x2eb4  Borg      624      596    655
-       Bupstash  88       --     108
-       JMBB      117      96     492
-       Kopia     72       76     117
-                                  
-x34d7  Borg      359      367    371
-       Bupstash  106      --     113
-       JMBB      80       59     391
-       Kopia     91       96     151
+State  Tool      Local/s  NFS/s  NFS3/s  SSHFS/s
+-----  --------  -------  -----  ------  -------
+x2a00  Borg      9 579    8 954  7 913   11 256
+       Bupstash  120      1 243  1 157   470
+       JMBB      1 297    690    696     8 392
+       Kopia     168      271    277     350
+                                          
+x2eb4  Borg      624      596    746     655
+       Bupstash  88       --     116     108
+       JMBB      117      106    69      492
+       Kopia     72       76     83      117
+                                          
+x34d7  Borg      359      367    383     371
+       Bupstash  106      --     122     113
+       JMBB      80       59     62      391
+       Kopia     91       96     107     151
 
 From past experience with the respective storage targets, one would have
 expected to find the following sequence (shortest to longest time):
@@ -968,14 +968,19 @@ collection procedure over NFS:
 	59731063inputs+865458outputs (180major+65251minor)pagefaults 0swaps
 
 As part of creating this article, this issue has been reported under
-<https://github.com/andrewchambers/bupstash/issues/157>.
+<https://github.com/andrewchambers/bupstash/issues/157>. Update 2021/04/11:
+NFS tests were repeated with mount options `nfsvers=3,nolock` to measure
+Bupstash's performance over NFS -- the new results are provided in column
+_NFS3_.
 
 Apart from that, certain combinations of tool and storage seem to be
 problematic:
 
  * Bupstash takes ten times the execution time for the initial run on NFS.
    Its access pattern seems to somehow fail for NFS whereas it runs quite
-   acceptably over SSHFS.
+   acceptably over SSHFS. Using the options for working around the locking
+   issue one can observe that the slowdown for operating Bupstash on NFS is
+   much smaller (about factor 1.3) for the subsequent runs.
  * JMBB takes four to six times the execution time when running on SSHFS.
    One explanation might be that JMBB compresses all data it reads and writes
    from and to the target storage and hence sshfs' default compression will
@@ -1197,11 +1202,6 @@ Note that this is multiple days after the actual test which completed on
 Conclusion
 ==========
 
-It seems quite difficult to obtain a coherent conclusion. Despite the fact that
-all of the tools are designed to perform backups and all of them allow this,
-there are some distinctive problems why each of the tools does not quite fit
-my expectation of an _ideal_ solution.
-
 There is also a certain disparity between _problems_ and _features_ here: I
 personally can do without most of the features but do not like to live with
 the problems. Additionally, backup is a _must have_ but also not something
@@ -1213,7 +1213,7 @@ are largely uninteresting such as long as there are no problems!
 This is an unfortunate situation with backup tools in general which may be one
 of the reasons why there are so few good tools to chose from :)
 
-Without further delay, the following section concludes the article by recalling
+Without further delay, the following table summarizes the findings by recalling
 the greatest issues observed for the respective tools:
 
 Tool      Problems
@@ -1229,30 +1229,32 @@ Kopia     -- no Unix pipes/special files support
           -- rather large backup sizes
            
 Bupstash  -- large file numbers in single directory
-          -- fails on NFS
+
+My conclusion from this is that _Bupstash_ is a most viable candidate. There
+are still some rough edges but given that it is the newest among the tools
+checked that can be expected.
 
 Future Directions
 =================
 
 None of the tools will immediately replace JMBB here. Borg is currently in use
 for all data that is too large for JMBB and does an acceptable job there
-(although it literally runs for hours). The following ideas exist to further dig
-into the details of the new tools and whether/how they might replace the
-established ones:
+(although it literally runs for hours). Given the current state of results,
+it seems most inetersting to further check on Bupstash especially wrt. the
+following points.
 
- * Check if Kopia's compression and deduplication parameters can be tuned to
-   achieve smaller backup sizes.
- * Consider Bupstash for backups to local file systems because there, the
-   large number of files matters less.
- * Experiment with code: Chose any of the tools and write a proof-of-concept
-   custom restore to understand their data storage format esp. wrt. crypto and
-   archival options. Think about how feasible it would be to write an own tool
-   to _write_ in that format.
+ * Automate a stable compilation routine to run this tool on Debian stable
+   systems.
+ * Think about replacing secondary large files backups with Bupstash.
+   For backups to local (network) targets the large number of files matters
+   less.
+ * Experiment with code: Try to write a proof-of-concept custom restore for
+   Bupstash to understand its data storage format esp. wrt. crypto and archival
+   options. Think about how feasible it would be to write an own tool to _write_
+   in that format.
  * Experiment with code: Try to store Bupstash's large number of files to some
    kind of database (Riak?) and find out if the resulting storage might be more
    “portable” across file systems.
- * Keep checking for alternative tools and find out if a smaller/easier test
-   procedure can be used to evaluate their performance.
 
 See Also
 ========
