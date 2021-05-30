@@ -1,0 +1,33 @@
+# Ma_Sys.ma Dockerfile for `bupstash-adv` 1.0.0, Copyright (c) 2021 Ma_Sys.ma.
+# For further info send an e-mail to Ma_Sys.ma@web.de.
+
+# EXEC docker build -t masysmalocal/bupstash-adv --build-arg MA_DEBIAN_MIRROR=http://192.168.1.16/debian -f dockerfile_bupstash_adv .
+
+ARG     MDVL_CI_ARCH_PREFIX=
+ARG     MDVL_CI_DEBIAN_VERSION=buster
+FROM    ${MDVL_CI_ARCH_PREFIX}debian:$MDVL_CI_DEBIAN_VERSION
+LABEL   maintainer "Linux-Fan, Ma_Sys.ma <Ma_Sys.ma@web.de>"
+LABEL   name bupstash-adv
+ARG     MDVL_CI_DEBIAN_VERSION=buster
+ARG     MA_DEBIAN_MIRROR=http://ftp.it.debian.org/debian
+SHELL   ["/bin/sh", "-ec"]
+RUN     :; \
+	printf "%s\n%s\n%s %s\n" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION main" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION-updates main" \
+		"deb http://security.debian.org/" \
+				"$MDVL_CI_DEBIAN_VERSION/updates main" \
+		> /etc/apt/sources.list; \
+	useradd -u 1000 -m bupstashuser; \
+	apt-get update; \
+	apt-get -y full-upgrade; \
+	apt-get -y install libsodium23 libgcc1 curl pkg-config; \
+	mkdir -p /home/bupstashuser/wd; \
+	chown bupstashuser:bupstashuser -R /home/bupstashuser; \
+	curl https://sh.rustup.rs -sSf | sh -s -- -y; \
+	cd /home/bupstashuser/wd; \
+	curl -L https://github.com/andrewchambers/bupstash/releases/download/v0.9.0/bupstash-v0.9.0-src+deps.tar.gz | tar -xz; \
+	:;
+USER    bupstashuser
+WORKDIR /home/bupstashuser/wd
+CMD     /bin/bash

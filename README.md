@@ -251,7 +251,7 @@ Metadata Encryption
 
 Multithreading or Parallelization
 :   Traditional backup tools (and even some of the more advanced ones) work
-    sequentially. The advances of multiprocessing have been claimed since years.
+    sequentially. The advances of multiprocessing have been claimed for years.
     Yet many programs do not make use of that potential gain in performance.
     With respect to backup tools, the advantages of parallelization are
     sometimes downplayed by people claiming that a backup tool should not

@@ -1,0 +1,55 @@
+# Ma_Sys.ma Dockerfile for `bupstash-cross` 1.0.0, Copyright (c) 2021 Ma_Sys.ma.
+# For further info send an e-mail to Ma_Sys.ma@web.de.
+
+# EXEC docker build -t masysmalocal/bupstash-cross-arm64 --build-arg=MDVL_CI_ARCH_PREFIX=arm64v8/ -f dockerfile_bupstash_cross .
+# EXEC docker build -t masysmalocal/bupstash --build-arg=MDVL_CI_DEBIAN_MIRROR=https://192.168.1.16/debian -f dockerfile_bupstash_cross .
+
+ARG     MDVL_CI_ARCH_PREFIX=
+ARG     MDVL_CI_DEBIAN_VERSION=buster
+FROM    debian:$MDVL_CI_DEBIAN_VERSION AS qemustatic
+ARG     MDVL_CI_DEBIAN_VERSION=buster
+ARG     MA_DEBIAN_MIRROR=http://ftp.it.debian.org/debian
+SHELL   ["/bin/sh", "-ec"]
+RUN     :; \
+	printf "%s\n%s\n%s %s\n" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION main" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION-updates main" \
+		"deb http://security.debian.org/" \
+					"$MDVL_CI_DEBIAN_VERSION/updates main" \
+		> /etc/apt/sources.list; \
+	apt-get update; \
+	apt-get -y dist-upgrade; \
+	apt-get -y install qemu-user-static;
+
+ARG     MDVL_CI_ARCH_PREFIX=
+ARG     MDVL_CI_DEBIAN_VERSION=buster
+FROM    ${MDVL_CI_ARCH_PREFIX}debian:$MDVL_CI_DEBIAN_VERSION
+LABEL   maintainer "Linux-Fan, Ma_Sys.ma <Ma_Sys.ma@web.de>"
+LABEL   name bupstash-adv
+ARG     MDVL_CI_DEBIAN_VERSION=buster
+ARG     MA_DEBIAN_MIRROR=http://ftp.it.debian.org/debian
+SHELL   ["/bin/sh", "-ec"]
+RUN     :; \
+	printf "%s\n%s\n%s %s\n" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION main" \
+		"deb $MA_DEBIAN_MIRROR $MDVL_CI_DEBIAN_VERSION-updates main" \
+		"deb http://security.debian.org/" \
+				"$MDVL_CI_DEBIAN_VERSION/updates main" \
+		> /etc/apt/sources.list; \
+	useradd -u 1000 -m bupstashuser; \
+	apt-get update; \
+	apt-get -y full-upgrade; \
+	apt-get -y install libsodium23 libsodium-dev libgcc1 curl pkg-config \
+		gcc; \
+	mkdir -p /home/bupstashuser/wd; \
+	chown bupstashuser:bupstashuser -R /home/bupstashuser; \
+	:;
+USER    bupstashuser
+WORKDIR /home/bupstashuser/wd
+# Separate layers for maximum debuggability
+RUN     curl https://sh.rustup.rs -sSf | sh -s -- -y
+RUN     curl -L https://github.com/andrewchambers/bupstash/releases/download/v0.9.0/bupstash-v0.9.0-src+deps.tar.gz | tar -xz
+RUN     :; \
+	. $HOME/.cargo/env; \
+	cargo build --release -j18; \
+	sha256sum /home/bupstashuser/wd/target/release/bupstash
