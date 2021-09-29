@@ -713,7 +713,7 @@ Pre-Test Insights
 
 Before beginning the actual tests, some experiments were made to determine the
 usage of the respective tools. Additionally, previous experience with JMBB and
-Borg already existent. This section provides a summary of related insights and
+Borg already existed. This section provides a summary of related insights and
 findings.
 
 Borg works purely sequential. There is a long standing issue in Github
@@ -924,7 +924,7 @@ table above:
    significant parts of their computation in parallel. JMBB is again the
    heaviest on resources while the other tools load the CPU much less such that
    other applications may continue to function with minimal performance issues.
-   Borg acts purely single-threaded yieling an average CPU usage of 99%.
+   Borg acts purely single-threaded yielding an average CPU usage of 99%.
 
 ## Data-Test to NFS and SSHFS
 
@@ -1094,7 +1094,7 @@ T2     Borg      18           166.03           86
        Bupstash  3            31.16            36
        Kopia     10           160.90           263
 
-The resulting backup size are similar to those for the data tests although this
+The resulting backup sizes are similar to those for the data tests although this
 time, differences between them are larger and Kopia's larger backup size cannot
 be attributed to missing garbage collection. On the positive side, caches seem
 to be smaller than with the Data test. This hints towards a certain growth in
@@ -1202,7 +1202,7 @@ Note that this is multiple days after the actual test which completed on
 Conclusion
 ==========
 
-There is also a certain disparity between _problems_ and _features_ here: I
+There is a certain disparity between _problems_ and _features_ here: I
 personally can do without most of the features but do not like to live with
 the problems. Additionally, backup is a _must have_ but also not something
 one gets in touch with often as the processes themselves are automated at least
