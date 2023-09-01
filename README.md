@@ -8,7 +8,7 @@ author: ["Linux-Fan, Ma_Sys.ma (Ma_Sys.ma@web.de)"]
 keywords: ["linux", "backup", "borg", "bupstash", "jmbb", "kopia", "deduplicating"]
 x-masysma-version: 1.1.0
 x-masysma-repository: https://www.github.com/m7a/lp-backup-tests
-x-masysma-website: https://masysma.lima-city.de/37/backup_tests_borg_bupstash_kopia.xhtml
+x-masysma-website: https://masysma.net/37/backup_tests_borg_bupstash_kopia.xhtml
 x-masysma-owned: 1
 x-masysma-copyright: |
   Copyright (c) 2021 Ma_Sys.ma.
@@ -366,7 +366,7 @@ Readable by Third-Party Tools
     Given the complexity of storage that includes deduplication, encryption,
     compression and multiple backup versions/hosts it is not surprising that
     most modern tools' data can only be read by themselves. Yet, it would be
-    highly desiable for independent and compatible restoration tools to exist!
+    highly desirable for independent and compatible restoration tools to exist!
 
 Windows Support w/o WSL/Cygwin
 :   Even if Linux is the primary system of concern (for the sake of this
@@ -399,7 +399,7 @@ Retention Policy for Versions
     than from archival storage.
 
 Directly Upload to Remote
-:   As already mentinued in the Preamble, backups are nowdays often stored on
+:   As already mentioned in the Preamble, backups are nowdays often stored on
     online storage. Of course, a local server may also do, but
     local filesystems as target storage are certainly the exception. It thus
     makes sense for backup tools to integrate the ability to upload the backup
@@ -429,8 +429,8 @@ Process Non-Persistent Live Streams
     and large data to a temporary storage.
 
 Configure Output File Size Limit
-:   Cheap online storages often impose a maximum file limit. While it is often
-    pretty large (e.g. magnitude of GiB) for paying customers, it is often
+:   Cheap online storages often impose a maximum file size limit. While it is
+    often pretty large (e.g. magnitude of GiB) for paying customers, it is often
     tightly limited for “free” accounts (e.g. magnitude of a few MiB). If a
     tool can adjust to these limits, it becomes usable across a wider area of
     target storages.
@@ -444,7 +444,7 @@ Incremental Metadata Store/Update
 :   While the actual data contents are often compressed/deduplicated and stored
     efficiently minimizing the number of read and write operations, same does
     not necessarily hold for the metadata. JMBB just rewrites the whole
-    “databse” of metadata on each run. Advanced tools often seem to use local
+    “database” of metadata on each run. Advanced tools often seem to use local
     cache directories to speed up the management of metadata. Neither solution
     is ideal: The ideal tool would not need such things and rather store
     everything efficiently.
@@ -1240,7 +1240,7 @@ Future Directions
 None of the tools will immediately replace JMBB here. Borg is currently in use
 for all data that is too large for JMBB and does an acceptable job there
 (although it literally runs for hours). Given the current state of results,
-it seems most inetersting to further check on Bupstash especially wrt. the
+it seems most interesting to further check on Bupstash especially wrt. the
 following points.
 
  * Automate a stable compilation routine to run this tool on Debian stable
@@ -1278,6 +1278,8 @@ Directory        Contents
  * Tools for backup scalability testing:
    <https://github.com/borgbackup/backupdata>.
    Not used when creating this article but interesting!
+ * A more recent article on backup tools comparison. This one includes restic
+   and Borg v2 Beta <https://github.com/deajan/backup-bench>
 
 License
 =======

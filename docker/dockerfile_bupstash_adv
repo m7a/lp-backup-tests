@@ -3,6 +3,9 @@
 
 # EXEC docker build -t masysmalocal/bupstash-adv --build-arg MA_DEBIAN_MIRROR=http://192.168.1.16/debian -f dockerfile_bupstash_adv .
 
+# Use this file over dockerfile_bupstash because it has all the new Rust
+# features needed.
+
 ARG     MDVL_CI_ARCH_PREFIX=
 ARG     MDVL_CI_DEBIAN_VERSION=bullseye
 FROM    ${MDVL_CI_ARCH_PREFIX}debian:$MDVL_CI_DEBIAN_VERSION
@@ -10,7 +13,7 @@ LABEL   maintainer "Linux-Fan, Ma_Sys.ma <Ma_Sys.ma@web.de>"
 LABEL   name bupstash-adv
 ARG     MDVL_CI_DEBIAN_VERSION=bullseye
 ARG     MA_DEBIAN_MIRROR=http://ftp.it.debian.org/debian
-ARG     MA_BUPSTASH_VERSION=v0.10.2
+ARG     MA_BUPSTASH_VERSION=v0.11.0
 SHELL   ["/bin/sh", "-ec"]
 RUN     :; \
 	printf "%s\n%s\n%s %s\n" \
