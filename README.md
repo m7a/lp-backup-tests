@@ -6,7 +6,7 @@ date: 2021/03/16 18:59:46
 lang: en-US
 author: ["Linux-Fan, Ma_Sys.ma (Ma_Sys.ma@web.de)"]
 keywords: ["linux", "backup", "borg", "bupstash", "jmbb", "kopia", "deduplicating"]
-x-masysma-version: 1.1.0
+x-masysma-version: 1.1.1
 x-masysma-repository: https://www.github.com/m7a/lp-backup-tests
 x-masysma-website: https://masysma.net/37/backup_tests_borg_bupstash_kopia.xhtml
 x-masysma-owned: 1
@@ -169,7 +169,7 @@ directly upload to remote               No    (1)   (1)       Yes
                                                                
 Very Advanced Features                                         
 mount backup as r/o filesystem          No    Yes   No        Yes
-multiple hosts backup to same target    No    Yes   Yes       Yes
+multiple hosts backup to same target    No    (13)  Yes       Yes
 process non-persistent live streams     No    Yes   Yes       Yes
 configure output file size limit        No    Yes?  (12)      No
 consistent state on interruption        No    Yes?  ?         ?
@@ -220,6 +220,9 @@ Yes?/No? := guessed.
      input sizes. This may cause problem if limitations exist in the underlying
      storage/file system.
  12. Practically irrelevant as the output file sizes are always rather small.
+ 13. Technically it does not fail to work under these circumstances, but the
+     Borg documentation advises against doing this for performance and security
+     reasons, see <https://borgbackup.readthedocs.io/en/stable/faq.html#can-i-backup-from-multiple-servers-into-a-single-repository>.
 
 ## Rationale
 
